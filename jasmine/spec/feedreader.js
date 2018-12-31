@@ -85,9 +85,8 @@ $(
       beforeEach(function(done) {
         loadFeed(0, done);
       });
-      it("when the loadFeed function is called, there is at least a single .entry element within the .feed container", function(done) {
-        expect($(".entry").length).toBeGreaterThan(0);
-        done();
+      it("when the loadFeed function is called, there is at least a single .entry element within the .feed container", function() {
+        expect($(".feed .entry").length).toBeGreaterThan(0);
       });
     });
 
@@ -97,16 +96,21 @@ $(
        * by the loadFeed function that the content actually changes.
        * Remember, loadFeed() is asynchronous.
        */
-      var oldUrl;
+      var oldUrl, newUrl;
       beforeEach(function(done) {
-        // checks the old url has value and store it
-        oldUrl = $(".entry-link").attr("href");
-        loadFeed(1, done);
+        loadFeed(0, function() {
+          oldUrl = $(".entry-link").attr("href");
+          done();
+          console.log("loadFeed 0 is finished : oldUrl?>>" + oldUrl);
+        });
       });
       it("when a new feed is loaded, by the loadFeed function that the content actually changes.", function(done) {
-        // checks the change => i.e. the latest one is differ than old
-        expect($(".entry-link").attr("href")).not.toBe(oldUrl);
-        done();
+        loadFeed(1, function() {
+          newUrl = $(".entry-link").attr("href");
+          expect(newUrl).not.toEqual(oldUrl);
+          done();
+          console.log("loadFeed 1 is finished: newUrl?>>" + newUrl);
+        });
       });
     });
   })()
